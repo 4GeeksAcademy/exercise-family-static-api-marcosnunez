@@ -38,6 +38,32 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+@app.route('/member/<int:id>', methods=['GET'])
+def get_member_api(id):
+    member = jackson_family.get_member(id)  
+    if member:
+        return jsonify(member), 200  
+    else:
+        return jsonify({"error": "Miembro no encontrado"}), 404  
+
+@app.route('/member', methods=['POST'])
+def add_member_apy():
+    data_request = request.get_json()
+    if not data_request:
+        return jsonify({"error": "Datos invalidos o faltan datos"}), 400
+    
+    new_member = jackson_family.add_member(data_request)
+
+    return jsonify({
+        "message": "Miembro agregado con éxito",
+        "member" : new_member
+    }), 201
+
+@app.route('/member/<int:id>', methods=['DELETE'])
+def delete_member_api(id):
+    delete_member = jackson_family.delete_member(id)
+    return jsonify(delete_member), 404
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
